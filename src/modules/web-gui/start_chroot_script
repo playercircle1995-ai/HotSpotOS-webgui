@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -x
+set -e
+# HotSpotOS web-gui module
+# Installs a Flask based dashboard showing hotspot/auto-hotspot status plus
+# controls for an attached ADI Pluto+ SDR (via libiio / pyadi-iio).
+# Written for the HotSpotOS fork
+########
+
+source /common.sh
+
+apt-get update --allow-releaseinfo-change
+apt-get -y install \
+    python3-flask \
+    python3-pip \
+    python3-venv \
+    python3-numpy \
+    python3-libiio \
+    libiio-utils \
+    iw \
+    wireless-tools
+
+# Unpack app files, systemd unit and default config
+unpack /filesystem/root /
+
+# Build a venv with access to the apt-installed system packages (flask,
+# numpy, libiio python bindings) so we only need to pip-install the pieces
+# that Raspberry Pi OS does not package: pyadi-iio.
+python3 -m venv --system-site-packages /opt/web-gui/venv
+/opt/web-gui/venv/bin/pip install --no-cache-dir --upgrade pip
+/opt/web-gui/venv/bin/pip install --no-cache-dir -r /opt/web-gui/requirements.txt
+
+chmod +x /opt/web-gui/app.py
+
+# Fill in build-time config defaults
+sed -i s"@WEB_GUI_PORT@$WEB_GUI_PORT@g" /etc/web-gui/config.json
+sed -i s"@WEB_GUI_PLUTO_URI@$WEB_GUI_PLUTO_URI@g" /etc/web-gui/config.json
+
+systemctl enable web-gui.service

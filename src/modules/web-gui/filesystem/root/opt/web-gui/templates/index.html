@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HotSpotOS Dashboard</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>HotSpotOS Dashboard</h1>
+</header>
+
+<main>
+  <section class="card" id="hotspot-card">
+    <h2>Hotspot / Wifi</h2>
+    <div id="hotspot-status">Loading...</div>
+    <div class="actions">
+      <button id="btn-rescan">Rescan Wifi</button>
+      <button id="btn-restart-ap">Restart AP Services</button>
+    </div>
+  </section>
+
+  <section class="card" id="sdr-card">
+    <h2>ADI Pluto+ SDR</h2>
+    <div id="sdr-status">Loading...</div>
+
+    <form id="sdr-form" class="sdr-form">
+      <label>RX Frequency (MHz)
+        <input type="number" id="rx-freq" step="0.001" placeholder="e.g. 2400">
+      </label>
+      <label>RX Gain (dB)
+        <input type="number" id="rx-gain" step="0.5" placeholder="e.g. 30">
+      </label>
+      <label>Sample Rate (MHz)
+        <input type="number" id="sample-rate" step="0.01" placeholder="e.g. 2">
+      </label>
+      <button type="submit">Apply</button>
+    </form>
+
+    <canvas id="spectrum" width="640" height="200"></canvas>
+
+    <details>
+      <summary>SDR Connection Settings</summary>
+      <form id="settings-form" class="sdr-form">
+        <label>Pluto URI
+          <input type="text" id="pluto-uri" placeholder="ip:192.168.2.1 or usb:1.2.5">
+        </label>
+        <button type="submit">Save</button>
+      </form>
+    </details>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

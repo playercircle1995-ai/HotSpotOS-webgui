@@ -1,0 +1,17 @@
+[Unit]
+Description=HotSpotOS web dashboard (hotspot status + Pluto+ SDR controls)
+After=network.target hostapd.service dnsmasq.service
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/web-gui/venv/bin/python3 /opt/web-gui/app.py
+WorkingDirectory=/opt/web-gui
+Restart=on-failure
+RestartSec=5
+User=root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

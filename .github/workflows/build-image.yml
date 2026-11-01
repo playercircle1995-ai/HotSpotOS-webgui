@@ -1,0 +1,74 @@
+name: Build HotSpotOS image
+
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: "CustomPiOS variant to build (leave as 'default' for the main HotSpotOS build)"
+        required: true
+        default: "default"
+
+jobs:
+  build:
+    name: CustomPiOS image build
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Check out HotSpotOS (this repo)
+        uses: actions/checkout@v4
+        with:
+          path: HotSpotOS
+
+      - name: Clone CustomPiOS
+        run: git clone --depth 1 https://github.com/guysoft/CustomPiOS.git CustomPiOS
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y realpath p7zip-full qemu-user-static binfmt-support jq fdisk
+
+      - name: Download Raspberry Pi OS Lite base image
+        run: |
+          cd HotSpotOS/src/image
+          wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_armhf_latest'
+
+      - name: Point HotSpotOS at the CustomPiOS checkout
+        run: |
+          cd HotSpotOS/src
+          ../../CustomPiOS/src/update-custompios-paths
+
+      - name: Enable loop device support
+        run: sudo modprobe loop
+
+      - name: Build image
+        run: |
+          cd HotSpotOS/src
+          sudo bash -x ./build_dist "${{ inputs.variant }}"
+
+      - name: Checksum artifact
+        if: success()
+        run: |
+          cd HotSpotOS/src/workspace
+          sudo chown -R "$USER:$USER" .
+          IMG="$(ls *.img | head -n1)"
+          xz -T0 -k "$IMG"
+          sha256sum "$IMG.xz" | tee "$IMG.xz.sha256"
+
+      - name: Upload image artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: HotSpotOS-image
+          path: |
+            HotSpotOS/src/workspace/*.img.xz
+            HotSpotOS/src/workspace/*.img.xz.sha256
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: HotSpotOS-build-log
+          path: HotSpotOS/src/build.log
+          if-no-files-found: ignore

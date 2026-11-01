@@ -1,0 +1,2 @@
+[ -n "$WEB_GUI_PORT" ] || WEB_GUI_PORT=80
+[ -n "$WEB_GUI_PLUTO_URI" ] || WEB_GUI_PLUTO_URI="ip:192.168.2.1"

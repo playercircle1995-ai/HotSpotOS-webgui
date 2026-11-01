@@ -1,0 +1,4 @@
+{
+  "port": WEB_GUI_PORT,
+  "pluto_uri": "WEB_GUI_PLUTO_URI"
+}

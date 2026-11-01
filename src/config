@@ -1,0 +1,18 @@
+export DIST_NAME=HotSpotOS
+export DIST_VERSION=0.3.0-webgui
+export MODULES="base(network,disable-services(auto-hotspot), usage-statistics, web-gui)"
+BASE_OVERRIDE_HOSTNAME=hotspot
+AUTO_HOTSPOT_NAME=hotspot
+
+export RPI_IMAGER_NAME="${DIST_NAME} version ${DIST_VERSION}"
+export RPI_IMAGER_DESCRIPTION="Raspberry Pi OS that starts a hotspot, if no wifi was found to conenct to"
+export RPI_IMAGER_ICON="https://raw.githubusercontent.com/guysoft/HotSpotOS/devel/media/rpi-imager-HotSpotOS.png"
+
+export USAGE_STATISTICS_URL=https://hotspotos-tracking.gnethomelinux.com
+
+# web-gui module: dashboard port and default ADI Pluto+ SDR connection URI
+# (override in config.local). "ip:192.168.2.1" is Pluto's default USB-gadget
+# ethernet address; use "usb:x.y.z" (see `iio_info -s`) if connecting Pluto
+# over USB without the gadget-ethernet network set up.
+export WEB_GUI_PORT=80
+export WEB_GUI_PLUTO_URI="ip:192.168.2.1"
