@@ -25,7 +25,10 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y realpath p7zip-full qemu-user-static binfmt-support jq fdisk
+          # realpath ships in coreutils (already present on the runner).
+          # qemu-user-static is a virtual package on newer Ubuntu releases;
+          # qemu-user-binfmt is the real package that provides it.
+          sudo apt-get install -y p7zip-full qemu-user-binfmt binfmt-support jq fdisk
 
       - name: Download Raspberry Pi OS Lite base image
         run: |
