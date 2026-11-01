@@ -27,9 +27,10 @@ jobs:
           sudo apt-get update
           # realpath ships in coreutils (already present on the runner).
           # qemu-user-static is a virtual package on newer Ubuntu releases;
-          # qemu-user-binfmt is the real package that provides it.
+          # qemu-user-binfmt registers binfmt_misc, qemu-user ships the
+          # qemu-arm-static binary CustomPiOS copies into the chroot.
           # python3-git (GitPython) is required by CustomPiOS's execution_order.py.
-          sudo apt-get install -y p7zip-full qemu-user-binfmt binfmt-support jq fdisk python3-git
+          sudo apt-get install -y p7zip-full qemu-user qemu-user-binfmt binfmt-support jq fdisk python3-git
 
       - name: Download Raspberry Pi OS Lite base image
         run: |
