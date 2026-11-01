@@ -22,13 +22,15 @@ jobs:
       - name: Clone CustomPiOS
         run: git clone --depth 1 https://github.com/guysoft/CustomPiOS.git CustomPiOS
 
-      - name: Patch CustomPiOS for Raspberry Pi OS Trixie (missing /etc/sysctl.conf)
+      - name: Patch CustomPiOS for Raspberry Pi OS Trixie (missing config files)
         run: |
           # The current Raspberry Pi OS Lite (Debian Trixie) image no longer ships
-          # /etc/sysctl.conf, but auto-hotspot's start_chroot_script assumes it exists.
+          # /etc/sysctl.conf or /etc/network/interfaces (it uses NetworkManager),
+          # but auto-hotspot's start_chroot_script assumes both exist.
           F=CustomPiOS/src/modules/auto-hotspot/start_chroot_script
           sed -i "\%ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf%i touch /etc/sysctl.conf" "$F"
-          grep -n -B1 sysctl.conf "$F"
+          sed -i "\%cp /etc/network/interfaces /etc/network/interfaces-backup%i touch /etc/network/interfaces" "$F"
+          grep -n -B1 -E 'sysctl.conf|interfaces-backup' "$F"
 
       - name: Install build dependencies
         run: |
